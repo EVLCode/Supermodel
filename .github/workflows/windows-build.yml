@@ -27,7 +27,7 @@ steps:
 
 - name: Build Supermodel using MSYS2 bash
   run: |
-    C:\msys64\usr\bin\bash.exe -lc "cd /c/Users/runner/work/Supermodel/Supermodel/Src && make"
+    C:\\msys64\\usr\\bin\\bash.exe -lc "cd /c/Users/runner/work/Supermodel/Supermodel/Src && make"
 
 - name: Upload binary
   uses: actions/upload-artifact@v4
