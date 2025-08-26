@@ -22,9 +22,16 @@ jobs:
             mingw-w64-x86_64-SDL2_net
 
       - name: Show installed binaries for debugging
+        shell: msys2 {0}
         run: |
-          echo "Installed in /mingw64/bin:"
-          ls /mingw64/bin | grep -E 'gcc|make|SDL2'
+          echo "Checking gcc and make versions:"
+          which gcc
+          gcc --version
+          which mingw32-make
+          mingw32-make --version
+
+          echo "Checking SDL2 includes:"
+          ls -l /mingw64/include/SDL2 || echo "SDL2 headers not found"
 
       - name: Build Supermodel (without network)
         shell: msys2 {0}
