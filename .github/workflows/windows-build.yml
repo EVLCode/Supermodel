@@ -21,37 +21,39 @@ jobs:
             mingw-w64-x86_64-SDL2
             mingw-w64-x86_64-SDL2_net
 
-      - name: Show installed binaries for debugging
+      - name: Show installed toolchain for debug
         shell: msys2 {0}
         run: |
-          echo "Checking gcc and make versions:"
-          which gcc
+          echo "GCC version:"
           gcc --version
-          which mingw32-make
+          echo "Make version:"
           mingw32-make --version
-
-          echo "Checking SDL2 includes:"
-          ls -l /mingw64/include/SDL2 || echo "SDL2 headers not found"
 
       - name: Build Supermodel (without network)
         shell: msys2 {0}
         run: |
           set -e
-          echo "Running build command..."
+          echo "Starting Supermodel build..."
           mingw32-make -f Makefiles/Makefile.Win32 > build.log 2>&1 || (
             echo "::error::Build failed. Dumping build.log..." &&
             cat build.log &&
             exit 1
           )
 
-      - name: Upload binary
+      - name: Search for Supermodel.exe after build
+        shell: msys2 {0}
+        run: |
+          echo "Searching for Supermodel.exe..."
+          find . -type f -iname "Supermodel.exe" || echo "No .exe found"
+
+      - name: Upload all .exe files
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: Supermodel-Windows
-          path: Supermodel.exe
+          name: Supermodel-Binaries
+          path: '**/*.exe'
 
-      - name: Upload build log if failed
+      - name: Upload build log if build failed
         if: failure()
         uses: actions/upload-artifact@v4
         with:
