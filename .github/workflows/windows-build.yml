@@ -1,36 +1,41 @@
 name: Build Supermodel for Windows
 
-on: workflow_dispatch:
+on:
+  workflow_dispatch:
 
-jobs: build: runs-on: windows-latest
+jobs:
+  build:
+    runs-on: windows-latest
 
-steps:
-- name: Checkout code
-  uses: actions/checkout@v3
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-- name: Install MSYS2 and dependencies
-  uses: msys2/setup-msys2@v2
-  with:
-    update: true
-    install: >-
-      base-devel
-      mingw-w64-x86_64-toolchain
-      mingw-w64-x86_64-SDL2
-      mingw-w64-x86_64-SDL2_net
+    - name: Install MSYS2 and dependencies
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          base-devel
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-SDL2
+          mingw-w64-x86_64-SDL2_net
 
-- name: Print working directory for debug
-  run: |
-    echo "Current working directory:"
-    pwd
-    echo "Listing contents:"
-    ls -la
+    - name: Print working directory for debug
+      run: |
+        echo "Current working directory:"
+        pwd
+        echo "Listing contents:"
+        ls -la
 
-- name: Build Supermodel using MSYS2 bash
-  run: |
-    C:\\msys64\\usr\\bin\\bash.exe -lc "cd /c/Users/runner/work/Supermodel/Supermodel/Src && make"
+    - name: Build Supermodel using MSYS2 bash
+      shell: msys2 {0}
+      run: |
+        cd /c/Users/runner/work/Supermodel/Supermodel/Src
+        make
 
-- name: Upload binary
-  uses: actions/upload-artifact@v4
-  with:
-    name: Supermodel-Windows
-    path: Src/Supermodel.exe
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: Supermodel-Windows
+        path: Src/Supermodel.exe
