@@ -11,31 +11,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install MSYS2 and dependencies
+      - name: Install MSYS2, GCC, Make, and SDL dependencies
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          install: >-
-            base-devel
-            mingw-w64-x86_64-toolchain
+          install: |
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
             mingw-w64-x86_64-SDL2
             mingw-w64-x86_64-SDL2_net
 
-      - name: Print working directory for debug
+      - name: Show installed binaries for debugging
         run: |
-          echo "Current working directory:"
-          pwd
-          echo "Listing contents:"
-          ls -la
+          echo "Installed in /mingw64/bin:"
+          ls /mingw64/bin | grep -E 'gcc|make|SDL2'
 
-      - name: Build Supermodel using MSYS2 bash
-        shell: msys2 -c mingw64 {0}
+      - name: Build Supermodel (without network)
+        shell: msys2 {0}
         run: |
-          cd Src
-          make
+          mingw32-make -f Makefiles/Makefile.Win32
+
+      # Uncomment this block instead of the one above if you need network support
+      # - name: Build Supermodel (with network)
+      #   shell: msys2 {0}
+      #   run: |
+      #     mingw32-make -f Makefiles/Makefile.Win32 NET_BOARD=1
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: Supermodel-Windows
-          path: Src/Supermodel.exe
+          path: Supermodel.exe
